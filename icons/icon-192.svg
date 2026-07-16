@@ -1,7 +1,0 @@
-<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
-  <rect width="192" height="192" rx="40" fill="#1a1208"/>
-  <circle cx="96" cy="96" r="85" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.3"/>
-  <circle cx="96" cy="96" r="65" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.2"/>
-  <text x="96" y="120" text-anchor="middle" font-size="72" font-family="serif">🪷</text>
-  <text x="96" y="160" text-anchor="middle" font-size="16" font-family="serif" fill="#c9a84c" letter-spacing="2">靜坐</text>
-</svg>
