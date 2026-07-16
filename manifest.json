@@ -1,0 +1,26 @@
+{
+  "name": "七天練習 - 霎哈嘉瑜伽",
+  "short_name": "七天練習",
+  "description": "給參加自覺活動後回家實作的七天靜坐練習",
+  "start_url": "index.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F0E8D0",
+  "theme_color": "#F0E8D0",
+  "lang": "zh-Hant-TW",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

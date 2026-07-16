@@ -1,0 +1,89 @@
+{
+  "days": [
+    {
+      "day": 1,
+      "key": "self_realization",
+      "title": "自覺",
+      "subtitle": "喚醒內在的甦醒",
+      "duration_min": 3,
+      "intro_event": "今天在活動現場，你已經體驗過這份甦醒。現在，讓我們在家裡再次確認它——它一直都在。",
+      "intro_new": "接下來三分鐘，不需要相信任何事，只需要願意坐下來，給自己一個機會。",
+      "practice_label": "跟著引導音檔完成一次自覺體驗",
+      "audio": "audio/day1-self-realization.mp3",
+      "self_check": "靜坐後，手掌是否有清涼或微微發麻的感覺？",
+      "journal_prompt": "今天靜坐後，你注意到身體或心裡有什麼不一樣？"
+    },
+    {
+      "day": 2,
+      "key": "attention",
+      "title": "注意力",
+      "subtitle": "學會辨認：練習是否『對了』",
+      "duration_min": 5,
+      "intro_event": "自覺不是一次性的事件，而是需要被留意的狀態。今天要學的，是怎麼確認自己有沒有做對。",
+      "practice_label": "對照片靜坐，練習把注意力留在手掌與頭頂",
+      "audio": "audio/day2-attention.mp3",
+      "self_check": "閉眼時，注意力容易被念頭帶走嗎？還是可以停在『沒有念頭』的狀態？",
+      "journal_prompt": "今天的靜坐，你的注意力停留在哪裡最久？"
+    },
+    {
+      "day": 3,
+      "key": "left_channel",
+      "title": "左脈",
+      "subtitle": "清理情緒與過去的重量",
+      "duration_min": 6,
+      "intro_event": "左脈掌管情緒、記憶與過去的經驗。當左脈過重時，容易感到疲憊、被過去困住。",
+      "practice_label": "蠟燭清理法（文字步驟示範）",
+      "audio": "audio/day3-left-channel.mp3",
+      "self_check": "做完之後，身體左側是否感覺比較輕鬆？",
+      "journal_prompt": "最近有沒有什麼過去的事，一直在心裡反覆出現？"
+    },
+    {
+      "day": 4,
+      "key": "right_channel",
+      "title": "右脈",
+      "subtitle": "安頓過度運轉的思緒",
+      "duration_min": 10,
+      "intro_event": "右脈掌管行動、計畫與未來。當右脈過度使用時，容易感到燥熱、易怒、腦中停不下來。",
+      "practice_label": "冰塊清理法：冰袋敷於右側肋骨下方10分鐘",
+      "audio": "audio/day4-right-channel.mp3",
+      "self_check": "敷完冰袋後，思緒是否比較容易安靜下來？",
+      "journal_prompt": "今天有沒有覺得自己『想太多』的時刻？"
+    },
+    {
+      "day": 5,
+      "key": "central_channel",
+      "title": "中脈",
+      "subtitle": "找回平衡，學會保護自己",
+      "duration_min": 4,
+      "intro_event": "中脈是平衡左右脈之後，能量真正上升的通道。今天的兩個動作，是每次練習前後的基本儀式。",
+      "practice_label": "提升昆達里尼手勢＋結界護體練習",
+      "audio": "audio/day5-central-channel.mp3",
+      "self_check": "做完結界後，是否感覺比較完整、不容易被外界影響？",
+      "journal_prompt": "今天有沒有特別需要保護自己的時刻？"
+    },
+    {
+      "day": 6,
+      "key": "cleansing",
+      "title": "淨化",
+      "subtitle": "認識能量系統，建立日常清理習慣",
+      "duration_min": 15,
+      "intro_event": "現在你已經有了體感經驗，是時候認識完整的輪穴系統——以及最簡單、最容易融入生活的清理方式。",
+      "practice_label": "睡前足浴法（溫鹽水泡腳15分鐘）",
+      "audio": "audio/day6-cleansing.mp3",
+      "self_check": "泡完腳，睡眠品質是否有感覺不一樣？",
+      "journal_prompt": "七大輪穴裡，你覺得自己哪一個目前最需要被照顧？"
+    },
+    {
+      "day": 7,
+      "key": "meditation",
+      "title": "靜坐",
+      "subtitle": "把練習帶回生活",
+      "duration_min": 20,
+      "intro_event": "最後一天，不是結束，而是把這七天學到的一切，帶回日常生活裡。",
+      "practice_label": "完整靜坐20分鐘＋赤腳接地5分鐘",
+      "audio": "audio/day7-meditation.mp3",
+      "self_check": "回顧這七天，哪一天的練習讓你感覺最深？",
+      "journal_prompt": "接下來，你想把哪一項技巧留在自己的日常裡？"
+    }
+  ]
+}

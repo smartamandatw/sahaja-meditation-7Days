@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>七天練習 · 霎哈嘉瑜伽</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F0E8D0;
+    --gold:#C9A84C;
+    --ink:#1C1A17;
+    --ink-soft:rgba(28,26,23,0.62);
+    --card-bg:rgba(255,255,255,0.38);
+    --card-border:rgba(201,168,76,0.35);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Noto Serif TC', serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:480px;
+    margin:0 auto;
+    padding:28px 20px 80px;
+  }
+
+  /* 進度列：7天圓點，走過的路徑一眼可見 */
+  .progress-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:28px;
+  }
+  .dot{
+    width:28px;height:28px;
+    border-radius:50%;
+    border:1.5px solid var(--card-border);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;
+    color:var(--ink-soft);
+    background:rgba(255,255,255,0.3);
+    transition:all .3s ease;
+  }
+  .dot.done{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:#fff;
+  }
+  .dot.current{
+    border-color:var(--gold);
+    color:var(--ink);
+    font-weight:700;
+    box-shadow:0 0 0 3px rgba(201,168,76,0.2);
+  }
+  .dot-line{flex:1;height:1px;background:var(--card-border);margin:0 2px;}
+
+  .eyebrow{
+    font-size:13px;
+    letter-spacing:0.12em;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  h1{
+    font-size:32px;
+    margin:0 0 4px;
+    font-weight:700;
+  }
+  .subtitle{
+    font-size:15px;
+    color:var(--ink-soft);
+    margin-bottom:24px;
+  }
+
+  .card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:16px;
+    opacity:0;
+    animation:fadeUp .6s ease forwards;
+  }
+  .card:nth-of-type(1){animation-delay:.05s;}
+  .card:nth-of-type(2){animation-delay:.15s;}
+  .card:nth-of-type(3){animation-delay:.25s;}
+  .card:nth-of-type(4){animation-delay:.35s;}
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  .intro-text{
+    font-size:15.5px;
+    line-height:1.85;
+  }
+
+  .practice-label{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  audio{width:100%;}
+
+  .self-check{
+    font-size:14px;
+    line-height:1.7;
+  }
+  .self-check .q{font-weight:700;margin-bottom:4px;}
+
+  textarea{
+    width:100%;
+    min-height:70px;
+    border:1px solid var(--card-border);
+    border-radius:12px;
+    background:rgba(255,255,255,0.5);
+    padding:12px;
+    font-family:inherit;
+    font-size:14.5px;
+    color:var(--ink);
+    resize:vertical;
+  }
+  textarea:focus{outline:2px solid var(--gold); outline-offset:1px;}
+
+  .btn{
+    display:block;
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:14px;
+    background:var(--ink);
+    color:var(--bg);
+    font-family:inherit;
+    font-size:16px;
+    font-weight:700;
+    letter-spacing:0.02em;
+    cursor:pointer;
+    margin-top:8px;
+  }
+  .btn:active{opacity:.85;}
+  .btn.secondary{
+    background:transparent;
+    color:var(--ink);
+    border:1.5px solid var(--ink);
+  }
+
+  .duration-badge{
+    display:inline-block;
+    font-size:12px;
+    color:var(--ink);
+    background:rgba(201,168,76,0.25);
+    padding:3px 10px;
+    border-radius:100px;
+    margin-bottom:14px;
+  }
+
+  /* 首次進入的判斷小視窗 */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(28,26,23,0.55);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+    z-index:50;
+  }
+  .modal{
+    background:var(--bg);
+    border-radius:20px;
+    padding:26px 22px;
+    max-width:340px;
+    text-align:center;
+  }
+  .modal p{font-size:15.5px; line-height:1.7; margin-bottom:18px;}
+  .modal .btn{margin-top:10px;}
+
+  .done-banner{
+    text-align:center;
+    padding:40px 20px;
+  }
+  .done-banner h2{font-size:22px;margin-bottom:8px;}
+  .done-banner p{color:var(--ink-soft); font-size:14.5px; line-height:1.7;}
+  .hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="progress-row" id="progressRow"></div>
+
+  <div class="eyebrow" id="eyebrow"></div>
+  <h1 id="dayTitle"></h1>
+  <div class="subtitle" id="daySubtitle"></div>
+
+  <div class="card">
+    <div class="intro-text" id="introText"></div>
+  </div>
+
+  <div class="card">
+    <div class="duration-badge" id="durationBadge"></div>
+    <div class="practice-label" id="practiceLabel"></div>
+    <audio id="audioPlayer" controls></audio>
+  </div>
+
+  <div class="card">
+    <div class="self-check">
+      <div class="q">練習後,留意一下：</div>
+      <div id="selfCheckText"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="practice-label" id="journalPromptText"></div>
+    <textarea id="journalInput" placeholder="寫下一句話就好..."></textarea>
+  </div>
+
+  <button class="btn" id="completeBtn">完成今天</button>
+</div>
+
+<div class="modal-overlay hidden" id="onboardModal">
+  <div class="modal">
+    <p>你今天剛參加完自覺活動嗎？</p>
+    <button class="btn" id="fromEventBtn">是的,剛體驗過</button>
+    <button class="btn secondary" id="newUserBtn">還沒,我是第一次認識</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var STORAGE_KEYS = {
+    currentDay: 'sy7_current_day',
+    completed: 'sy7_completed_days',
+    journal: 'sy7_journal',
+    source: 'sy7_source',
+    fromEvent: 'sy7_from_event'
+  };
+
+  function getCurrentDay(){
+    var v = localStorage.getItem(STORAGE_KEYS.currentDay);
+    return v ? parseInt(v, 10) : 1;
+  }
+  function setCurrentDay(n){
+    localStorage.setItem(STORAGE_KEYS.currentDay, String(n));
+  }
+  function getCompleted(){
+    try{
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.completed) || '[]');
+    }catch(e){ return []; }
+  }
+  function markCompleted(day){
+    var list = getCompleted();
+    if(list.indexOf(day) === -1){
+      list.push(day);
+      localStorage.setItem(STORAGE_KEYS.completed, JSON.stringify(list));
+    }
+  }
+  function saveJournal(day, text){
+    var all;
+    try{ all = JSON.parse(localStorage.getItem(STORAGE_KEYS.journal) || '{}'); }
+    catch(e){ all = {}; }
+    all[day] = { text: text, date: new Date().toISOString() };
+    localStorage.setItem(STORAGE_KEYS.journal, JSON.stringify(all));
+  }
+
+  // 記錄使用者來源（QR現場 / LINE推播），只存第一次
+  (function captureSource(){
+    if(localStorage.getItem(STORAGE_KEYS.source)) return;
+    var params = new URLSearchParams(window.location.search);
+    var src = params.get('src');
+    if(src) localStorage.setItem(STORAGE_KEYS.source, src);
+  })();
+
+  function renderProgress(currentDay, completed){
+    var row = document.getElementById('progressRow');
+    row.innerHTML = '';
+    for(var i = 1; i <= 7; i++){
+      var dot = document.createElement('div');
+      dot.className = 'dot';
+      if(completed.indexOf(i) !== -1) dot.className += ' done';
+      else if(i === currentDay) dot.className += ' current';
+      dot.textContent = completed.indexOf(i) !== -1 ? '✓' : i;
+      row.appendChild(dot);
+      if(i < 7){
+        var line = document.createElement('div');
+        line.className = 'dot-line';
+        row.appendChild(line);
+      }
+    }
+  }
+
+  function renderDay(dayData, fromEvent){
+    document.getElementById('eyebrow').textContent = 'DAY ' + dayData.day + ' / 7';
+    document.getElementById('dayTitle').textContent = dayData.title;
+    document.getElementById('daySubtitle').textContent = dayData.subtitle;
+
+    var intro = (dayData.day === 1 && fromEvent === false && dayData.intro_new)
+      ? dayData.intro_new
+      : dayData.intro_event;
+    document.getElementById('introText').textContent = intro;
+
+    document.getElementById('durationBadge').textContent = '約 ' + dayData.duration_min + ' 分鐘';
+    document.getElementById('practiceLabel').textContent = dayData.practice_label;
+
+    var audioEl = document.getElementById('audioPlayer');
+    audioEl.src = dayData.audio;
+    audioEl.onerror = function(){
+      audioEl.style.display = 'none';
+    };
+
+    document.getElementById('selfCheckText').textContent = dayData.self_check;
+    document.getElementById('journalPromptText').textContent = dayData.journal_prompt;
+
+    var journalAll = {};
+    try{ journalAll = JSON.parse(localStorage.getItem(STORAGE_KEYS.journal) || '{}'); }catch(e){}
+    if(journalAll[dayData.day]){
+      document.getElementById('journalInput').value = journalAll[dayData.day].text || '';
+    }
+  }
+
+  function showOnboardIfNeeded(currentDay, cb){
+    var fromEvent = localStorage.getItem(STORAGE_KEYS.fromEvent);
+    if(currentDay === 1 && fromEvent === null){
+      var modal = document.getElementById('onboardModal');
+      modal.classList.remove('hidden');
+      document.getElementById('fromEventBtn').onclick = function(){
+        localStorage.setItem(STORAGE_KEYS.fromEvent, 'true');
+        modal.classList.add('hidden');
+        cb(true);
+      };
+      document.getElementById('newUserBtn').onclick = function(){
+        localStorage.setItem(STORAGE_KEYS.fromEvent, 'false');
+        modal.classList.add('hidden');
+        cb(false);
+      };
+    } else {
+      cb(fromEvent === 'true');
+    }
+  }
+
+  function showCompletionBanner(){
+    document.querySelector('.wrap').innerHTML =
+      '<div class="done-banner">' +
+      '<div class="eyebrow">七天練習</div>' +
+      '<h2>七天,你走完了。</h2>' +
+      '<p>這不是結束,是把練習真正留在生活裡的開始。<br>感謝你願意每天,給自己這幾分鐘。</p>' +
+      '</div>';
+  }
+
+  // 主流程
+  fetch('days.json')
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      var currentDay = getCurrentDay();
+      var completed = getCompleted();
+
+      if(currentDay > 7){
+        showCompletionBanner();
+        return;
+      }
+
+      renderProgress(currentDay, completed);
+
+      showOnboardIfNeeded(currentDay, function(fromEvent){
+        var dayData = data.days.find(function(d){ return d.day === currentDay; });
+        renderDay(dayData, fromEvent);
+
+        document.getElementById('completeBtn').onclick = function(){
+          var journalText = document.getElementById('journalInput').value.trim();
+          saveJournal(currentDay, journalText);
+          markCompleted(currentDay);
+          setCurrentDay(currentDay + 1);
+          location.reload();
+        };
+      });
+    })
+    .catch(function(err){
+      document.querySelector('.wrap').innerHTML =
+        '<p style="text-align:center;color:var(--ink-soft);padding-top:60px;">內容載入失敗,請稍後再試。</p>';
+      console.error('days.json load error:', err);
+    });
+
+})();
+</script>
+</body>
+</html>
