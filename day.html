@@ -184,8 +184,28 @@
     padding:40px 20px;
   }
   .done-banner h2{font-size:22px;margin-bottom:8px;}
-  .done-banner p{color:var(--ink-soft); font-size:14.5px; line-height:1.7;}
+  .done-banner p{color:var(--ink-soft); font-size:14.5px; line-height:1.7; margin-bottom:24px;}
   .hidden{display:none;}
+
+  /* 回顧模式：點已完成的天數,唯讀顯示當天內容 */
+  .review-body{
+    text-align:left;
+    max-height:60vh;
+    overflow-y:auto;
+  }
+  .review-body .r-label{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:14px 0 4px;
+  }
+  .review-body .r-text{
+    font-size:14.5px;
+    line-height:1.75;
+  }
+  .modal.wide{max-width:400px; width:100%;}
+
+  /* 重置確認視窗的警告用色 */
+  .modal p.warn{color:#a34a3d;}
 </style>
 </head>
 <body>
@@ -228,6 +248,22 @@
     <p>你今天剛參加完自覺活動嗎？</p>
     <button class="btn" id="fromEventBtn">是的,剛體驗過</button>
     <button class="btn secondary" id="newUserBtn">還沒,我是第一次認識</button>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="resetModal">
+  <div class="modal">
+    <p class="warn">確定要重置全部進度嗎？</p>
+    <p>已完成的天數、日記內容都會被清空,回到第一天,這個動作無法復原。</p>
+    <button class="btn" id="resetConfirmBtn">確定重置</button>
+    <button class="btn secondary" id="resetCancelBtn">先不要</button>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="reviewModal">
+  <div class="modal wide">
+    <div class="review-body" id="reviewBody"></div>
+    <button class="btn secondary" id="reviewCloseBtn">關閉</button>
   </div>
 </div>
 
@@ -276,15 +312,31 @@
     if(src) localStorage.setItem(STORAGE_KEYS.source, src);
   })();
 
-  function renderProgress(currentDay, completed){
+  function resetAll(){
+    localStorage.removeItem(STORAGE_KEYS.currentDay);
+    localStorage.removeItem(STORAGE_KEYS.completed);
+    localStorage.removeItem(STORAGE_KEYS.journal);
+    localStorage.removeItem(STORAGE_KEYS.fromEvent);
+    // sy7_source（QR/LINE來源）保留，這是統計用途，不算練習進度
+    location.reload();
+  }
+
+  function renderProgress(currentDay, completed, allDays, onReviewDay){
     var row = document.getElementById('progressRow');
     row.innerHTML = '';
     for(var i = 1; i <= 7; i++){
       var dot = document.createElement('div');
       dot.className = 'dot';
-      if(completed.indexOf(i) !== -1) dot.className += ' done';
+      var isDone = completed.indexOf(i) !== -1;
+      if(isDone) dot.className += ' done';
       else if(i === currentDay) dot.className += ' current';
-      dot.textContent = completed.indexOf(i) !== -1 ? '✓' : i;
+      dot.textContent = isDone ? '✓' : i;
+      if(isDone){
+        dot.style.cursor = 'pointer';
+        (function(dayNum){
+          dot.addEventListener('click', function(){ onReviewDay(dayNum); });
+        })(i);
+      }
       row.appendChild(dot);
       if(i < 7){
         var line = document.createElement('div');
@@ -292,6 +344,48 @@
         row.appendChild(line);
       }
     }
+  }
+
+  function showReview(dayData){
+    var body = document.getElementById('reviewBody');
+    body.innerHTML =
+      '<div class="eyebrow">DAY ' + dayData.day + ' · ' + dayData.title + '</div>' +
+      '<div class="r-label">當天練習</div>' +
+      '<div class="r-text">' + dayData.practice_label + '</div>' +
+      '<div class="r-label">自我檢查</div>' +
+      '<div class="r-text">' + dayData.self_check + '</div>';
+
+    var journalAll = {};
+    try{ journalAll = JSON.parse(localStorage.getItem(STORAGE_KEYS.journal) || '{}'); }catch(e){}
+    if(journalAll[dayData.day] && journalAll[dayData.day].text){
+      body.innerHTML +=
+        '<div class="r-label">你當時寫的日記</div>' +
+        '<div class="r-text">' + journalAll[dayData.day].text + '</div>';
+    }
+    document.getElementById('reviewModal').classList.remove('hidden');
+  }
+
+  function setupResetTrigger(){
+    var trigger = document.getElementById('eyebrow');
+    var pressTimer = null;
+    var PRESS_MS = 700;
+
+    function start(){ pressTimer = setTimeout(function(){
+      document.getElementById('resetModal').classList.remove('hidden');
+    }, PRESS_MS); }
+    function cancel(){ clearTimeout(pressTimer); }
+
+    trigger.addEventListener('touchstart', start);
+    trigger.addEventListener('touchend', cancel);
+    trigger.addEventListener('touchmove', cancel);
+    trigger.addEventListener('mousedown', start);
+    trigger.addEventListener('mouseup', cancel);
+    trigger.addEventListener('mouseleave', cancel);
+
+    document.getElementById('resetCancelBtn').onclick = function(){
+      document.getElementById('resetModal').classList.add('hidden');
+    };
+    document.getElementById('resetConfirmBtn').onclick = resetAll;
   }
 
   function renderDay(dayData, fromEvent){
@@ -343,13 +437,30 @@
     }
   }
 
-  function showCompletionBanner(){
+  function showCompletionBanner(allDays){
     document.querySelector('.wrap').innerHTML =
+      '<div class="progress-row" id="progressRow"></div>' +
       '<div class="done-banner">' +
-      '<div class="eyebrow">七天練習</div>' +
+      '<div class="eyebrow" id="eyebrow">七天練習</div>' +
       '<h2>七天,你走完了。</h2>' +
-      '<p>這不是結束,是把練習真正留在生活裡的開始。<br>感謝你願意每天,給自己這幾分鐘。</p>' +
+      '<p>這不是結束,是把練習真正留在生活裡的開始。<br>感謝你願意每天,給自己這幾分鐘。<br>想重新來一次,或回顧任何一天,都可以。</p>' +
+      '<button class="btn" id="restartBtn">重新開始七天</button>' +
       '</div>';
+
+    renderProgress(8, getCompleted(), allDays, function(dayNum){
+      var dayData = allDays.find(function(d){ return d.day === dayNum; });
+      showReview(dayData);
+    });
+    setupResetTrigger();
+    document.getElementById('restartBtn').onclick = function(){
+      document.getElementById('resetModal').classList.remove('hidden');
+    };
+  }
+
+  function wireReviewModalClose(){
+    document.getElementById('reviewCloseBtn').onclick = function(){
+      document.getElementById('reviewModal').classList.add('hidden');
+    };
   }
 
   // 主流程
@@ -359,12 +470,18 @@
       var currentDay = getCurrentDay();
       var completed = getCompleted();
 
+      wireReviewModalClose();
+
       if(currentDay > 7){
-        showCompletionBanner();
+        showCompletionBanner(data.days);
         return;
       }
 
-      renderProgress(currentDay, completed);
+      renderProgress(currentDay, completed, data.days, function(dayNum){
+        var dayData = data.days.find(function(d){ return d.day === dayNum; });
+        showReview(dayData);
+      });
+      setupResetTrigger();
 
       showOnboardIfNeeded(currentDay, function(fromEvent){
         var dayData = data.days.find(function(d){ return d.day === currentDay; });
